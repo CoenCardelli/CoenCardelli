@@ -44,7 +44,6 @@ The FARS dataset is a nationwide census of fatal motor vehicle traffic crashes c
 | PEDS | Integer | Number of pedestrians involved |
 | VE_TOTAL | Integer | Total number of vehicles involved |
 | PERSONS | Integer | Total number of persons involved |
-| DRUNK_DR | Integer | Number of drunk drivers involved |
 | RUR_URB / RUR_URBNAME | Integer / String | Rural vs. urban classification |
 | LGT_COND / LGT_CONDNAME | Integer / String | Lighting conditions (daylight, dark, dusk, etc.) |
 | WEATHER / WEATHERNAME | Integer / String | Atmospheric conditions (clear, rain, snow, fog, etc.) |
@@ -82,13 +81,13 @@ Traffic fatalities represent one of the leading causes of preventable death in t
 ---
 
 ### Question 2
-**In which states does alcohol involvement in fatal crashes exceed the national rate, and does that pattern correlate with rural road prevalence and crash severity?**
+**How do weather conditions and rural vs. urban classification interact to influence the severity of fatal crashes, and which combinations of these factors produce the highest average fatality counts?**
 
 **Why It Is Interesting and Important:**
 
-Drunk driving remains one of the most preventable causes of traffic fatalities in the United States, yet enforcement resources and public awareness campaigns are not evenly distributed across states. This question goes beyond simply counting drunk-driving crashes — it calculates each state's alcohol involvement rate relative to the national baseline, then overlays rural/urban context (`RUR_URB`) and average fatalities per crash (`FATALS`) to identify where alcohol-impaired driving is both more common and more deadly. Socially, this matters because rural states often face compounding disadvantages: longer emergency response times, higher speed limits, and fewer rideshare alternatives to drunk driving. Economically, identifying high-rate states allows federal highway safety funding (such as NHTSA grants) to be targeted where DUI interventions would produce the greatest reduction in fatalities. For policymakers, the correlation between rural road share and drunk driving fatality rates can justify investment in rural sobriety checkpoints, ignition interlock legislation, and late-night public transportation alternatives.
+Fatal crash severity is shaped by a complex interplay of environmental and geographic factors. This question examines how atmospheric conditions (`WEATHER`) and road setting (`RUR_URB`) combine to drive the deadliest outcomes. Socially, rural communities face disproportionately higher fatality rates due to longer emergency response times, higher speed limits, and less-forgiving road design — understanding how weather compounds these risks provides a more complete picture of where lives are most at risk. Economically, the findings can guide state and federal decisions around rural road safety improvements, adverse weather driving campaigns, and emergency response infrastructure investment. For public health officials and transportation planners, identifying which weather and location combinations produce the worst outcomes enables smarter, multi-layered interventions rather than single-cause solutions. The question is also significant because it challenges the intuitive assumption that adverse weather is always the primary driver of severity — in reality, the interaction between weather and rural context tells a more nuanced story.
 
-**Connection to Dataset:** Uses `DRUNK_DR`, `STATENAME`, `RUR_URBNAME`, `FATALS`, `ST_CASE` (for crash count), and `PERSONS` columns. A calculated field divides the count of crashes where `DRUNK_DR` ≥ 1 by total crash count per state to produce a state-level alcohol involvement rate, which is then compared against the national average.
+**Connection to Dataset:** Uses `WEATHERNAME`, `RUR_URBNAME`, `FATALS`, `ST_CASE` (for crash count), `STATENAME`, and `PERSONS` columns.
 
 ---
 
@@ -97,19 +96,16 @@ Drunk driving remains one of the most preventable causes of traffic fatalities i
 The following manipulations and calculated fields were applied in Tableau to support the analysis:
 
 **1. Calculated Field – Average Fatalities per Crash:**
-A calculated field was created by dividing `FATALS` by the number of crash records (`ST_CASE` count) to produce an average fatalities per crash metric. This allows for comparison of crash severity across different conditions independent of raw crash volume.
+A calculated field was created by dividing the sum of `FATALS` by the count of distinct crash records (`ST_CASE`) to produce an average fatalities per crash metric. This allows for fair comparison of crash severity across different conditions independent of raw crash volume — for example, rural areas have fewer total crashes than urban areas but may produce higher average fatalities per crash.
 
 **2. Grouping Hour into Time-of-Day Bins (Question 1):**
-The `HOUR` field (0–23) was grouped into four time-of-day categories — Early Morning (12am–5am), Morning (6am–11am), Afternoon (12pm–5pm), and Evening/Night (6pm–11pm) — using a calculated field to make the time dimension more interpretable in visualizations.
+The `HOUR` field (0–23) was grouped into four time-of-day categories — Early Morning (12am–5am), Morning (6am–11am), Afternoon (12pm–5pm), and Evening/Night (6pm–11pm) — using a calculated field to make the time dimension more interpretable and visually clean in the heatmap visualization.
 
 **3. Filter on Known/Valid Values:**
-Records where `HOUR` was coded as 99 ("Unknown") or `WEATHER` was coded as 98/99 (unknown/not reported) were excluded from the relevant visualizations to ensure analytical accuracy and avoid misleading patterns from missing data.
+Records where `HOUR` was coded as 99 ("Unknown") or `WEATHER` was coded as 98/99 (unknown/not reported) were excluded from the relevant visualizations to ensure analytical accuracy and avoid misleading patterns introduced by missing or unreported data.
 
-**4. Drunk Driver Flag:**
-The `DRUNK_DR` field (number of drunk drivers per crash) was used as both a quantitative measure and converted to a binary dimension (0 = No drunk driver, 1+ = Drunk driver involved) for certain views to simplify comparison across rural/urban contexts and weather conditions.
-
-**5. State-Level Alcohol Involvement Rate (Question 2):**
-A calculated field was created to compute the proportion of crashes in each state where `DRUNK_DR` ≥ 1, divided by the total number of crashes in that state. This rate was then compared against the national average rate to identify states exceeding the baseline, enabling a normalized geographic comparison independent of each state's raw crash volume.
+**4. Rural/Urban and Weather Cross-Dimension (Question 2):**
+The `RUR_URBNAME` and `WEATHERNAME` fields were used together as categorical dimensions to create a cross-tabulation of average fatalities per crash. This allows the visualization to surface which specific combinations of setting and weather condition are associated with the highest crash severity, rather than examining each variable in isolation.
 
 ---
 
@@ -129,17 +125,17 @@ The analysis reveals that dark roadways without lighting are consistently the mo
 
 ---
 
-### Question 2 – State-Level Alcohol Involvement and Rural Correlation
+### Question 2 – Weather Conditions and Rural vs. Urban Setting
 
-**Visualization:** A choropleth map showing each state's alcohol involvement rate relative to the national average, paired with a scatter plot of alcohol involvement rate vs. rural crash share, sized by average fatalities per crash.
+**Visualization:** A stacked bar chart showing average fatalities per crash broken down by weather condition, with rural vs. urban classification as a color dimension. A secondary heatmap cross-tabulates weather condition against rural/urban setting, colored by average fatalities per crash.
 
 **Findings:**
 
-States exceeding the national drunk driving rate tend to cluster in rural regions of the country, where alternative transportation options are limited and enforcement density is lower. The scatter plot reveals a positive correlation between rural road share and alcohol involvement rate, with the highest-severity crashes (measured by average fatalities per crash) concentrated among rural, high-alcohol-rate states. Notably, states with lower overall crash volumes are not insulated from high drunk driving rates — several low-population rural states rank among the worst offenders on a per-crash basis.
+Rural crashes consistently produce higher average fatalities per crash than urban crashes across all weather conditions. Contrary to intuition, the highest-severity crashes do not cluster around the most adverse weather conditions such as heavy rain or snow — instead, crashes occurring in clear or cloudy conditions in rural settings produce some of the worst outcomes. This likely reflects the fact that drivers reduce speed and exercise more caution in visibly poor weather, while clear conditions on rural roads encourage higher speeds and less vigilance. The interaction between rural setting and seemingly benign weather conditions represents an underappreciated risk factor that is not captured when either variable is examined in isolation.
 
 *[Insert Tableau visualization here]*
 
-**Implications:** Rural sobriety enforcement and DUI checkpoint programs represent high-impact interventions. Federal highway safety funding should weight rural states with above-average alcohol involvement rates as priority recipients. Public health messaging campaigns targeting rural communities — particularly around late-night and weekend driving — could meaningfully reduce fatality rates in the most at-risk states.
+**Implications:** Rural road safety campaigns should not focus exclusively on adverse weather scenarios. Public messaging targeting clear-weather, high-speed rural driving — particularly at night — could have significant impact. Infrastructure investments such as rumble strips, improved signage, and guardrails on rural highways would address the structural factors that make rural clear-weather crashes so deadly.
 
 ---
 
@@ -148,6 +144,11 @@ States exceeding the national drunk driving rate tend to cluster in rural region
 The Tableau packaged workbook (.twbx) file is included in this repository.
 
 ---
+
+## References
+
+- National Highway Traffic Safety Administration. (2022). *Fatality Analysis Reporting System (FARS) 2022 Final Release.* U.S. Department of Transportation. https://catalog.data.gov/dataset/fatality-analysis-reporting-system-fars-2023-accidents
+- Bureau of Transportation Statistics. *National Transportation Atlas Database (NTAD).* https://www.bts.gov/ntad
 
 ## References
 
