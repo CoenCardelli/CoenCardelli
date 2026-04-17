@@ -98,14 +98,14 @@ The following manipulations and calculated fields were applied in Tableau to sup
 **1. Calculated Field – Average Fatalities per Crash:**
 A calculated field was created by dividing the sum of `FATALS` by the count of distinct crash records (`ST_CASE`) to produce an average fatalities per crash metric. This allows for fair comparison of crash severity across different conditions independent of raw crash volume — for example, rural areas have fewer total crashes than urban areas but may produce higher average fatalities per crash.
 
-**2. Grouping Hour into Time-of-Day Bins (Question 1):**
-The `HOUR` field (0–23) was grouped into four time-of-day categories — Early Morning (12am–5am), Morning (6am–11am), Afternoon (12pm–5pm), and Evening/Night (6pm–11pm) — using a calculated field to make the time dimension more interpretable and visually clean in the heatmap visualization.
+**2. Calculated Field – Time of Day:**
+A calculated field named "Time of Day" was created to categorize the `HOUR` field (0–23) into four readable time periods: Early Morning (12am–5am), Morning (6am–11am), Afternoon (12pm–5pm), and Evening/Night (6pm–11pm). This field was used as a dimension in the analysis to make the time-of-day patterns more interpretable in visualizations.
 
-**3. Filter on Known/Valid Values:**
-Records where `HOUR` was coded as 99 ("Unknown") or `WEATHER` was coded as 98/99 (unknown/not reported) were excluded from the relevant visualizations to ensure analytical accuracy and avoid misleading patterns introduced by missing or unreported data. Similarly, lighting condition values of "Not Reported", "Other", and "Reported as Unknown" were excluded, and rural/urban classifications of "Not Reported", "Trafficway Not in System", and "Unknown" were filtered out to retain only the meaningful Rural and Urban categories.
+**3. Hour Axis Range Adjustment:**
+The `HOUR` field was initially displaying a default axis range of -2 to 25 in Tableau due to automatic padding. The axis was manually fixed to a custom range of 0 to 23 to accurately reflect the valid hour values in the dataset. Additionally, the aggregation for the Hour filter was changed from SUM to Count to ensure the field was being treated as a category rather than a numeric measure, producing the correct heatmap grid.
 
-**4. Rural/Urban and Weather Cross-Dimension (Question 2):**
-The `RUR_URBNAME` and `WEATHERNAME` fields were used together as categorical dimensions to create a cross-tabulation of average fatalities per crash. This allows the visualization to surface which specific combinations of setting and weather condition are associated with the highest crash severity, rather than examining each variable in isolation.
+**4. Rural/Urban Filter:**
+The `RUR_URBNAME` field contains several classification values beyond the core Rural and Urban categories, including "Not Reported", "Trafficway Not in System", and "Unknown". These non-meaningful categories were filtered out in the Question 2 visualizations to ensure the analysis focused only on the valid Rural vs. Urban comparison, avoiding skewed results from incomplete or inapplicable records.
 
 ---
 
