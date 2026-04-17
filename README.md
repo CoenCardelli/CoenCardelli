@@ -1,7 +1,7 @@
 # MIST 4610 Group Project 2
 
 ## Team Name
-**Group 1**
+**Group 6**
 
 ## Team Members
 
@@ -115,7 +115,7 @@ The `RUR_URBNAME` field contains several classification values beyond the core R
 
 **Visualization:** Heatmap of crash frequency by hour of day (x-axis) and lighting condition (y-axis), colored by total number of fatal crashes. A secondary bar chart shows average fatalities per crash by lighting condition.
 
-![Q1 Dashboard](https://raw.githubusercontent.com/CoenCardelli/FARS-Dataset-Group1/main/4610_Q1.png)
+![Q1 Dashboard](https://raw.githubusercontent.com/CoenCardelli/CoenCardelli/main/4610_Q1.png)
 
 **Findings:**
 
@@ -129,7 +129,7 @@ The heatmap reveals that Dark - Unknown Lighting and Dark - Not Lighted conditio
 
 **Visualization:** A heatmap cross-tabulating weather condition against rural/urban setting, colored by average fatalities per crash. A secondary bar chart shows average fatalities per crash broken down by weather condition with rural vs. urban classification as a color dimension.
 
-![Q2 Dashboard](https://raw.githubusercontent.com/CoenCardelli/FARS-Dataset-Group1/main/4610_Q2.png)
+![Q2 Dashboard](https://raw.githubusercontent.com/CoenCardelli/CoenCardelli/main/4610_Q2.png)
 
 **Findings:**
 
@@ -141,7 +141,7 @@ Rural crashes consistently produce higher average fatalities per crash than urba
 
 ## Tableau Packaged Workbook
 
-The Tableau packaged workbook (.twbx) file is included in this repository: [FARS_Group1.twbx](https://github.com/CoenCardelli/FARS-Dataset-Group1/blob/main/FARS_Group1.twbx)
+The Tableau packaged workbook (.twbx) file is included in this repository: [FARS_Group1.twbx](https://github.com/CoenCardelli/CoenCardelli/blob/main/FARS_Group1.twbx)
 
 ---
 
