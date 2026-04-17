@@ -1,7 +1,7 @@
 # MIST 4610 Group Project 2
 
 ## Team Name
-**Group 6**
+**Group 1**
 
 ## Team Members
 
