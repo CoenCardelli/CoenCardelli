@@ -74,7 +74,7 @@ The table above covers the primary analytical columns used in this project. The 
 
 **Why It Is Interesting and Important:**
 
-Traffic fatalities represent one of the leading causes of preventable death in the United States. Understanding the relationship between lighting conditions (captured in `LGT_COND`) and time of day (`HOUR`) is critical for informing infrastructure investment decisions such as roadway lighting expansion, reflective signage upgrades, and speed limit adjustments during nighttime hours. From a public policy standpoint, identifying which hours and lighting environments produce the most fatal crashes enables targeted safety campaigns and funding allocation by state and federal transportation agencies. This question also has a direct economic dimension — fatal crashes carry enormous societal costs including emergency response, lost productivity, and healthcare expenditure, all of which can be reduced with better-targeted interventions.
+Traffic fatalities represent one of the leading causes of preventable death in the United States, and the FARS dataset's combination of `LGT_COND` and `HOUR` fields makes it uniquely suited to examine how visibility and time of day compound crash risk. Understanding this relationship is critical for informing infrastructure investment decisions such as roadway lighting expansion, reflective signage upgrades, and speed limit adjustments during nighttime hours. From a public policy standpoint, identifying which hours and lighting environments produce the most fatal crashes — using the 39,681 crash records in this dataset — enables targeted safety campaigns and funding allocation by state and federal transportation agencies. This question also has a direct economic dimension: fatal crashes carry enormous societal costs including emergency response, lost productivity, and healthcare expenditure, all of which can be reduced with better-targeted interventions derived from the patterns this data reveals.
 
 **Connection to Dataset:** Uses `LGT_COND`, `LGT_CONDNAME`, `HOUR`, `HOURNAME`, `FATALS`, and `STATENAME` columns.
 
@@ -85,7 +85,7 @@ Traffic fatalities represent one of the leading causes of preventable death in t
 
 **Why It Is Interesting and Important:**
 
-Fatal crash severity is shaped by a complex interplay of environmental and geographic factors. This question examines how atmospheric conditions (`WEATHER`) and road setting (`RUR_URB`) combine to drive the deadliest outcomes. Socially, rural communities face disproportionately higher fatality rates due to longer emergency response times, higher speed limits, and less-forgiving road design — understanding how weather compounds these risks provides a more complete picture of where lives are most at risk. Economically, the findings can guide state and federal decisions around rural road safety improvements, adverse weather driving campaigns, and emergency response infrastructure investment. For public health officials and transportation planners, identifying which weather and location combinations produce the worst outcomes enables smarter, multi-layered interventions rather than single-cause solutions. The question is also significant because it challenges the intuitive assumption that adverse weather is always the primary driver of severity — in reality, the interaction between weather and rural context tells a more nuanced story.
+Fatal crash severity is shaped by a complex interplay of environmental and geographic factors, and the FARS dataset captures both through its `WEATHER` and `RUR_URB` fields across nearly 40,000 crash records — providing sufficient depth to analyze these interactions meaningfully. This question examines how atmospheric conditions and road setting combine to drive the deadliest outcomes. Socially, rural communities face disproportionately higher fatality rates due to longer emergency response times, higher speed limits, and less-forgiving road design — understanding how weather compounds these risks provides a more complete picture of where lives are most at risk. Economically, the findings can guide state and federal decisions around rural road safety improvements, adverse weather driving campaigns, and emergency response infrastructure investment. The question is also significant because it challenges the intuitive assumption that adverse weather is always the primary driver of severity — the interaction between weather and rural context captured in this dataset tells a more nuanced story that single-variable analysis would miss.
 
 **Connection to Dataset:** Uses `WEATHERNAME`, `RUR_URBNAME`, `FATALS`, `ST_CASE` (for crash count), `STATENAME`, and `PERSONS` columns.
 
@@ -102,7 +102,7 @@ A calculated field was created by dividing the sum of `FATALS` by the count of d
 The `HOUR` field (0–23) was grouped into four time-of-day categories — Early Morning (12am–5am), Morning (6am–11am), Afternoon (12pm–5pm), and Evening/Night (6pm–11pm) — using a calculated field to make the time dimension more interpretable and visually clean in the heatmap visualization.
 
 **3. Filter on Known/Valid Values:**
-Records where `HOUR` was coded as 99 ("Unknown") or `WEATHER` was coded as 98/99 (unknown/not reported) were excluded from the relevant visualizations to ensure analytical accuracy and avoid misleading patterns introduced by missing or unreported data.
+Records where `HOUR` was coded as 99 ("Unknown") or `WEATHER` was coded as 98/99 (unknown/not reported) were excluded from the relevant visualizations to ensure analytical accuracy and avoid misleading patterns introduced by missing or unreported data. Similarly, lighting condition values of "Not Reported", "Other", and "Reported as Unknown" were excluded, and rural/urban classifications of "Not Reported", "Trafficway Not in System", and "Unknown" were filtered out to retain only the meaningful Rural and Urban categories.
 
 **4. Rural/Urban and Weather Cross-Dimension (Question 2):**
 The `RUR_URBNAME` and `WEATHERNAME` fields were used together as categorical dimensions to create a cross-tabulation of average fatalities per crash. This allows the visualization to surface which specific combinations of setting and weather condition are associated with the highest crash severity, rather than examining each variable in isolation.
@@ -115,40 +115,35 @@ The `RUR_URBNAME` and `WEATHERNAME` fields were used together as categorical dim
 
 **Visualization:** Heatmap of crash frequency by hour of day (x-axis) and lighting condition (y-axis), colored by total number of fatal crashes. A secondary bar chart shows average fatalities per crash by lighting condition.
 
+![Q1 Dashboard](https://raw.githubusercontent.com/CoenCardelli/FARS-Dataset-Group1/main/4610_Q1.png)
+
 **Findings:**
 
-The analysis reveals that dark roadways without lighting are consistently the most dangerous environment for fatal crashes, particularly during the late-night and early-morning hours (10pm–3am). Despite lower overall traffic volume at night, fatality rates are significantly elevated compared to daytime hours. Daylight crashes are far more frequent in absolute terms due to higher traffic volume but produce fewer fatalities per crash on average. Dawn and dusk represent transitional risk periods where lighting is inconsistent and driver visibility is compromised, producing fatality spikes disproportionate to their traffic share.
+The heatmap reveals that Dark - Unknown Lighting and Dark - Not Lighted conditions produce the highest crash concentrations during late night and early morning hours (roughly 10pm–3am), despite significantly lower overall traffic volume during those hours. Daylight crashes are more frequent in absolute terms during peak afternoon hours (12pm–5pm) due to higher traffic volume, but the bar chart shows that Dark - Not Lighted crashes produce the highest average fatalities per crash — meaning when crashes happen in unlit dark conditions, they tend to be deadlier. Dawn crashes, while fewer in number, show a disproportionately high average fatality rate relative to their traffic share, suggesting that transitional lighting at sunrise creates particularly dangerous visibility conditions.
 
-*[Insert Tableau visualization here]*
-
-**Implications:** States with high proportions of rural roads and limited street infrastructure should prioritize lighting upgrades on high-speed corridors. Nighttime speed limit reductions and increased patrols during late-night hours may also reduce severity in unlit environments.
+**Implications:** States with high proportions of rural roads and limited street infrastructure should prioritize lighting upgrades on high-speed corridors. Nighttime speed limit reductions and increased patrols during late-night hours may also reduce severity in unlit environments. The dawn spike suggests that driver awareness campaigns targeting early morning commuters could also reduce fatalities during this overlooked risk window.
 
 ---
 
 ### Question 2 – Weather Conditions and Rural vs. Urban Setting
 
-**Visualization:** A stacked bar chart showing average fatalities per crash broken down by weather condition, with rural vs. urban classification as a color dimension. A secondary heatmap cross-tabulates weather condition against rural/urban setting, colored by average fatalities per crash.
+**Visualization:** A heatmap cross-tabulating weather condition against rural/urban setting, colored by average fatalities per crash. A secondary bar chart shows average fatalities per crash broken down by weather condition with rural vs. urban classification as a color dimension.
+
+![Q2 Dashboard](https://raw.githubusercontent.com/CoenCardelli/FARS-Dataset-Group1/main/4610_Q2.png)
 
 **Findings:**
 
-Rural crashes consistently produce higher average fatalities per crash than urban crashes across all weather conditions. Contrary to intuition, the highest-severity crashes do not cluster around the most adverse weather conditions such as heavy rain or snow — instead, crashes occurring in clear or cloudy conditions in rural settings produce some of the worst outcomes. This likely reflects the fact that drivers reduce speed and exercise more caution in visibly poor weather, while clear conditions on rural roads encourage higher speeds and less vigilance. The interaction between rural setting and seemingly benign weather conditions represents an underappreciated risk factor that is not captured when either variable is examined in isolation.
+Rural crashes consistently produce higher average fatalities per crash than urban crashes across every weather condition. The heatmap shows that Blowing Sand, Soil, or Dirt in rural settings produces the highest average fatality rate — a finding that points to visibility impairment on high-speed rural roads with no urban infrastructure to slow traffic. The bar chart reinforces that the Rural bar extends further right than Urban across all weather types, confirming the pattern is not weather-specific but structural. Notably, Clear weather in rural settings produces higher average fatalities than many adverse weather conditions in urban settings — directly challenging the assumption that bad weather is the primary crash severity driver. Drivers appear to exercise more caution in visibly poor weather, while clear conditions on rural roads encourage higher speeds and reduced vigilance.
 
-*[Insert Tableau visualization here]*
-
-**Implications:** Rural road safety campaigns should not focus exclusively on adverse weather scenarios. Public messaging targeting clear-weather, high-speed rural driving — particularly at night — could have significant impact. Infrastructure investments such as rumble strips, improved signage, and guardrails on rural highways would address the structural factors that make rural clear-weather crashes so deadly.
+**Implications:** Rural road safety campaigns should not focus exclusively on adverse weather scenarios. Public messaging targeting clear-weather, high-speed rural driving — particularly at night — could have significant impact. Infrastructure investments such as rumble strips, improved signage, and guardrails on rural highways would address the structural factors that make rural crashes so deadly regardless of weather. Federal highway safety funding should prioritize rural corridors where the combination of high speeds, limited infrastructure, and longer emergency response times compounds fatality risk across all weather conditions.
 
 ---
 
 ## Tableau Packaged Workbook
 
-The Tableau packaged workbook (.twbx) file is included in this repository.
+The Tableau packaged workbook (.twbx) file is included in this repository: [FARS_Group1.twbx](https://github.com/CoenCardelli/FARS-Dataset-Group1/blob/main/FARS_Group1.twbx)
 
 ---
-
-## References
-
-- National Highway Traffic Safety Administration. (2022). *Fatality Analysis Reporting System (FARS) 2022 Final Release.* U.S. Department of Transportation. https://catalog.data.gov/dataset/fatality-analysis-reporting-system-fars-2023-accidents
-- Bureau of Transportation Statistics. *National Transportation Atlas Database (NTAD).* https://www.bts.gov/ntad
 
 ## References
 
