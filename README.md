@@ -7,7 +7,7 @@
 
 | Name | GitHub |
 |------|--------|
-| Elher Zemihret | [Ezemihret](https://github.com/Ezemihret/SQLGROUPPPROJECT) |
+| Elher Zemihret | [Ezemihret](https://github.com/Ezemihret/Group-Project-2) |
 | Allison Davis | [AllisonDavis149](https://github.com/AllisonDavis149/Group-Project-2) |
 | Coen Cardelli | [CoenCardelli](https://github.com/CoenCardelli/CoenCardelli) |
 | Charlotte Holzapfel | [charlotteholzapfel](https://github.com/charlotteholzapfel/Group-Project-2) |
